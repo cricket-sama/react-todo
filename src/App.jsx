@@ -19,15 +19,12 @@ let todoList = [
 ];
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
       <h1>Todo List</h1>
         <ul>
-          {todoList.map(function (item) {
-            return <li key={item.id}>{item.title}</li>;
-          })}
+          {todoList.map((item) => <li key={item.id}>{item.title}</li>)}
         </ul>
     </>
   )
