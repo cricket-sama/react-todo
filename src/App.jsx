@@ -3,6 +3,15 @@ import TodoList from './TodoList.jsx'
 import AddTodoForm from './AddTodoForm.jsx'
 import { useEffect, useState } from 'react'
 
+const getOptions = {
+  method: "GET",      
+  headers: {
+    'Authorization': `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`
+  },
+};
+
+const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+
 function App() {
 
   const [todoList, setTodoList] = useState([]);
@@ -10,17 +19,10 @@ function App() {
 
   const fetchData = async () => {
 
-    const options = {
-      method: "GET",      
-      headers: {
-        'Authorization': `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`
-      },
-    };
-
-    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+    setIsLoading(true);
     
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url, getOptions);
     
       if (!response.ok) {
         const message = `Error: ${response.status}`;
@@ -34,13 +36,11 @@ function App() {
         title: todo.fields.title
       }));
 
-      console.log(todos);
-
-      setTodoList(todos);
-      setIsLoading(false);
-      
+      setTodoList(todos);      
     } catch (error) {
       console.log(error.message);
+    }  finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,25 +55,25 @@ function App() {
   }, [todoList]);
 
   const postTodo = async (todo) => {
+    
+    const airtableData = {
+      fields: {
+        title: todo,
+      },
+    };
+
+    const postOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+      },
+      body: JSON.stringify(airtableData),
+    };
+
     try {
-      const airtableData = {
-        fields: {
-          title: todo,
-        },
-      };
 
-      const options = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
-        },
-        body: JSON.stringify(airtableData),
-      };
-
-      const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
-
-      const response = await fetch(url, options);
+      const response = await fetch(url, postOptions);
 
       if (!response.ok) {
         const message = `Error: ${response.status}`;
