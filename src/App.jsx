@@ -3,6 +3,8 @@ import TodoList from './TodoList.jsx'
 import AddTodoForm from './AddTodoForm.jsx'
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import styles from './App.module.css'
+import Nav from './Nav.jsx'
 
 const getOptions = {
   method: "GET",      
@@ -53,7 +55,7 @@ function App() {
     if(!isLoading) {
         localStorage.setItem('savedTodoList', JSON.stringify(todoList));
     };
-  }, [todoList]);
+  }, [todoList, isLoading]);
 
   const postTodo = async (todo) => {
     
@@ -106,25 +108,28 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <h1>Todo List</h1>
-              <AddTodoForm onAddTodo={addTodo} />
-              {isLoading ? <p>Loading...</p> :
-              <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
-            </>
-          }
-        />
-        <Route
-          path="/new"
-          element={
-            <h1>New Todo List</h1>
-          }
-        />
-      </Routes>
+      <div className={styles.appContainer}>
+        <Nav />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div>
+                <h1>Todo List</h1>
+                <AddTodoForm onAddTodo={addTodo} />
+                {isLoading ? <p>Loading...</p> :
+                <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
+              </div>
+            }
+          />
+          <Route
+            path="/new"
+            element={
+              <h1>New Todo List</h1>
+            }
+          />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }

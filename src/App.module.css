@@ -1,0 +1,15 @@
+.appContainer {
+    margin: auto;
+    border: 10px solid blanchedalmond;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+}
+
+@media (max-width: 600px) {
+    .appContainer {
+        margin: 0 auto;
+        padding: 0;
+        width: 90%;
+    }
+}

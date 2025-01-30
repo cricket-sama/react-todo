@@ -1,0 +1,17 @@
+.List {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0 auto;
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+@media (max-width: 600px) {
+    .List {
+        width: 80%;
+        padding: 0 1em;
+        padding-bottom: 3em;
+    }
+}
