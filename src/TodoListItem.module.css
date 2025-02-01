@@ -1,0 +1,28 @@
+.ListItem {
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5rem 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.todoTitle {
+    flex-grow: 1;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.removeButton {
+    margin-right: 1em;
+    padding: 0.5em;
+    border-radius: 5px;
+}
+
+@media (max-width: 600px) {
+    .ListItem {
+        font-size: 3em;
+    }
+}

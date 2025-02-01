@@ -1,0 +1,26 @@
+.navContainer {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 2rem;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.navList {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
+}
+
+.navLinks {
+    padding: 0.5rem 1rem;
+}
+
+@media (max-width: 600px) {
+    .navLinks {
+        font-size: 1.5em;
+    }
+}

@@ -1,0 +1,39 @@
+.formContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem auto;
+    padding: 0;
+    width: 80%;
+    max-width: calc(100% - 2rem);
+    box-sizing: border-box;
+}
+
+.addButton {
+    flex-shrink: 0;
+    border-radius: 5px;
+    padding: 0.5em;
+    font-size: 0.75em;
+}
+
+.title {
+    font-weight: 400;
+    font-size: 2em;
+}
+
+@media (max-width: 600px) {
+    .formContainer {
+        max-width: 80%;
+        margin: 0 auto;
+        margin-bottom: 1.5em;
+        font-size: 1.25em;
+    }
+    .title {
+        font-size: 2.2em;
+    }
+    .addButton {
+        font-size: 1em;
+    }
+}

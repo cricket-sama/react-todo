@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react'
+import styles from './InputWithLabel.module.css'
 
 function InputWithLabel({ todoTitle , children, handleTitleChange} ) {
     
@@ -12,6 +13,7 @@ function InputWithLabel({ todoTitle , children, handleTitleChange} ) {
         <>
             <label htmlFor="todoTitle">{children}</label>
                 <input 
+                    className={styles.inputField}
                     type="text"
                     id="todoTitle"
                     name="title"
