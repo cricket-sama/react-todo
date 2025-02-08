@@ -34,6 +34,7 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  color: #d2a2e3;
 }
 
 h1 {
@@ -67,6 +68,9 @@ button:focus-visible {
   :root {
     color: #7e3199;
     background-color: #d2a2e3;
+  }
+  body {
+    color: #7e3199;
   }
   h1 {
     color: #7e3199;
