@@ -9,7 +9,7 @@ function Nav() {
                     <Link to='/' className={styles.navLinks}>Home</Link>
                 </li>
                 <li>
-                    <Link to='/newTodo' className={styles.navLinks}>New Todo</Link>
+                    <Link to='/new' className={styles.navLinks}>New Todo</Link>
                 </li>
             </ul>
         </nav>
