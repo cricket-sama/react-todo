@@ -7,7 +7,7 @@ function TodoListItem({ todo , onRemoveTodo }) {
         <li className={styles.ListItem}>
             <button 
                 className={styles.removeButton}
-                type="button" 
+                type='button' 
                 onClick={() => onRemoveTodo(todo.id)}
             >
                 Remove
