@@ -12,12 +12,12 @@ function InputWithLabel({ todoTitle , children, handleTitleChange} ) {
     
     return (
         <>
-            <label htmlFor="todoTitle">{children}</label>
+            <label htmlFor='todoTitle'>{children}</label>
                 <input 
                     className={styles.inputField}
-                    type="text"
-                    id="todoTitle"
-                    name="title"
+                    type='text'
+                    id='todoTitle'
+                    name='title'
                     value={todoTitle}
                     onChange={handleTitleChange}
                     ref={inputRef}

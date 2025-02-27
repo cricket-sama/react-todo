@@ -1,0 +1,30 @@
+.homeContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.speechBubbleContainer {
+    position: relative;
+}
+
+.speechBubble {
+    width: 50%;
+}
+
+.speechText {
+    position: absolute;
+    text-align: center;
+    width: 40%;
+    top: 10%;
+    left: 30%;
+    word-wrap: break-word;
+    font-size: small;
+    color:blueviolet;
+}
+
+.frogImage {
+    width: 60%;
+    margin-top: -2em;
+}

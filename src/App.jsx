@@ -1,11 +1,12 @@
 import './App.css'
 import TodoList from './components/TodoList.jsx'
 import AddTodoForm from './components/AddTodoForm.jsx'
-import { useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useEffect, useState, useCallback } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import styles from './App.module.css'
 import Nav from './Nav.jsx'
 import SortToggleButton from './components/SortToggleButton.jsx'
+import Home from './components/Home.jsx'
 
 const getOptions = {
   method: "GET",      
@@ -14,22 +15,30 @@ const getOptions = {
   },
 };
 
-// URL from Week 15 initial instructions
-// const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?view=Grid%20view&sort%5B0%5D%5Bfield%5D=title&sort%5B0%5D%5Bdirection%5D=asc`;
-
 function App() {
 
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sortDirection, setSortDirection] = useState('asc');
+  const [tableName, setTableName] = useState('Todo List');
+
+  const path = useLocation();
+
+  useEffect(() => {
+    if (path.pathname === '/' || path.pathname === '/main') {
+      setTableName('Todo List')
+    } else if (path.pathname === '/others') {
+      setTableName('Ideas & Notes');
+    }
+  }, [path.pathname]);
 
   const toggleSortDirection = () => {
     setSortDirection(prevDirection => prevDirection === 'asc' ? 'desc' : 'asc');
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
 
-    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?view=Grid%20view&sort%5B0%5D%5Bfield%5D=createdTime&sort%5B0%5D%5Bdirection%5D=${sortDirection}`;
+    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${tableName}?view=Grid%20view&sort%5B0%5D%5Bfield%5D=createdTime&sort%5B0%5D%5Bdirection%5D=${sortDirection}`;
 
     setIsLoading(true);
     
@@ -42,26 +51,6 @@ function App() {
       }
 
       const data = await response.json();
-
-      // First JS sorting, A-to-Z
-      // data.records.sort((objectA, objectB) => {
-      //   const titleA = objectA.fields.title.toLowerCase();
-      //   const titleB = objectB.fields.title.toLowerCase();
-        
-      //   if (titleA < titleB) return -1;
-      //   if (titleA > titleB) return 1;
-      //   return 0;
-      // });
-
-      // Second JS sorting, Z-to-A
-      // data.records.sort((objectA, objectB) => {
-      //   const titleA = objectA.fields.title.toLowerCase();
-      //   const titleB = objectB.fields.title.toLowerCase();
-        
-      //   if (titleA < titleB) return 1;
-      //   if (titleA > titleB) return -1;
-      //   return 0;
-      // });
 
       console.log("Airtable API Response:", data.records);
 
@@ -77,17 +66,24 @@ function App() {
     }  finally {
       setIsLoading(false);
     }
-  };
+  }, [tableName, sortDirection]);
 
   useEffect(() => {
     fetchData();
-  }, [sortDirection]);
+  }, [tableName, sortDirection, fetchData]);
 
   useEffect(() => {
     if(!isLoading) {
         localStorage.setItem('savedTodoList', JSON.stringify(todoList));
     };
   }, [todoList, isLoading]);
+
+  useEffect(() => {
+    if (path.pathname !== '/') {
+      console.log("User has navigated away from home.");
+      localStorage.setItem('hasNavigated', JSON.stringify(true));
+    }
+  }, [path.pathname]);
 
   const postTodo = async (todo) => {
     
@@ -106,7 +102,7 @@ function App() {
       body: JSON.stringify(airtableData),
     };
 
-    const postUrl = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+    const postUrl = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${tableName}`;
 
     try {
 
@@ -128,28 +124,58 @@ function App() {
     }
   };
 
-  const addTodo = async (newTodoTitle) => {
-    const newTodo = await postTodo(newTodoTitle);
+  const addTodo = async (title) => {
+    const newTodo = await postTodo(title);
     if (newTodo) {
       fetchData();
     }
   };
 
-  const removeTodo = (id) => {
-    const newTodoList = todoList.filter((todo) => todo.id !== id);
-    setTodoList(newTodoList);
+  const deleteTodo = async (id) => {
+    const deleteUrl = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${tableName}/${id}`;
+
+    const deleteOptions = {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+      },
+    };
+
+    try {
+      const response = await fetch(deleteUrl, deleteOptions);
+
+      if (!response.ok) {
+        const message = `Error: ${response.status}`;
+        throw new Error(message);
+      }
+      console.log(`Todo with ID '${id}' deleted`);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const removeTodo = async (id) => {
+    await deleteTodo(id);
+    fetchData();
   };
 
   return (
-    <BrowserRouter>
       <div className={styles.appContainer}>
         <Nav />
         <Routes>
           <Route
-            path="/"
+            path='/'
             element={
               <div>
-                <h1>Todo List</h1>
+                <Home todoList={todoList} />
+              </div>
+            }
+          />
+          <Route
+            path='/main'
+            element={
+              <div>
+                <h1>{tableName}</h1>
                 <SortToggleButton sortDirection={sortDirection} toggleSortDirection={toggleSortDirection} />
                 <AddTodoForm onAddTodo={addTodo} />
                 {isLoading ? <p>Loading...</p> :
@@ -158,20 +184,19 @@ function App() {
             }
           />
           <Route
-            path="/new"
+            path='/others'
             element={
               <div>
-                <h1>New Todo List</h1>
+                <h1>{tableName}</h1>
                 <SortToggleButton sortDirection={sortDirection} toggleSortDirection={toggleSortDirection} />
                 <AddTodoForm onAddTodo={addTodo} />
                 {isLoading ? <p>Loading...</p> :
-                <TodoList todoList={[]} onRemoveTodo={removeTodo} />}
+                <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
               </div>
             }
           />
         </Routes>
       </div>
-    </BrowserRouter>
   );
 }
 
